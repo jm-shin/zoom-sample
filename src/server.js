@@ -28,21 +28,25 @@ const sockets = [];
 
 wss.on('connection', (socket) => {
     sockets.push(socket);
+    socket['nickname'] = 'None';
     console.log("브라우저 연결 완료");
     socket.on('close', () => console.log('서버 연결끊김'));
+    socket.on('message', (msg, isBinary)=> {
+        const messageToString = isBinary? msg : msg.toString();
+        const message = JSON.parse(messageToString);
 
-    // socket.on('message', (message, isBinary)=> {
-    //     const messageString = isBinary? message : message.toString();
-    //     socket.send(messageString);
-    // });
-
-    socket.on('message', (message, isBinary)=> {
-        const messageString = isBinary? message : message.toString();
-        sockets.forEach((aSocket) => {
-            aSocket.send(messageString);
-        });
+        switch (message.type) {
+            case 'new_message':
+                sockets.forEach((aSocket) => {
+                    aSocket.send(`${socket.nickname}: ${message.payload}`);
+                });
+                break;
+            case 'nickname':
+                console.log(message);
+                socket['nickname'] = message.payload;
+                break;
+        }
     });
-    socket.send("hello!!");
 });
 
 server.listen(3000, handleListen);
