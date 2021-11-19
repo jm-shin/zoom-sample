@@ -1,7 +1,7 @@
 import http from 'http';
 import { Server } from 'socket.io';
 import express from 'express';
-import  { instrument} from "@socket.io/admin-ui";
+import  { instrument } from "@socket.io/admin-ui";
 const app = express();
 
 app.set('view engine', 'pug');
