@@ -12,9 +12,9 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-app.get('/*', (req, res) =>
-    res.redirect('/')
-);
+app.get('/*', (req, res) => {
+    res.redirect('/');
+});
 
 const httpServer = http.createServer(app);
 const wsServer = new Server(httpServer);
@@ -25,6 +25,9 @@ wsServer.on('connection', (socket) => {
         done();
         socket.to(roomName).emit('welcome!');
     });
+    socket.on('offer', (offer, roomName) => {
+        socket.to(roomName).emit('offer', offer);
+    })
 });
 
 const handleListen = () => console.log('Listening on http://localhost:3000');
